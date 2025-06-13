@@ -91,7 +91,7 @@ namespace bytes
 	void stream::seek(std::size_t index, byte_t bitindex)
 	{
 		// Note: index may be set to buffersize to point to next byte to add
-		assert(index < _buffer.size());
+		assert(index <= _buffer.size());
 		assert(bitindex < 8);
 
 		_index = index;

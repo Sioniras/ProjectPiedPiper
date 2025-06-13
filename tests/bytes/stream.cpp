@@ -107,9 +107,33 @@ TEST(bytes, read_and_peek_bits)
 	bytes::stream::buffer_t buffer { 0xEF, 0xBE, 0xAD, 0xDE };
 	bytes::stream stream { buffer };
 
+	EXPECT_FALSE(stream.at_end());
 	EXPECT_EQ(stream.peek_bits<32>().to_ulong(), 0xDEADBEEF);
 	EXPECT_EQ(stream.peek_bits<16>().to_ulong(), 0xBEEF);
 	EXPECT_EQ(stream.read_bits<16>().to_ulong(), 0xBEEF);
 	EXPECT_EQ(stream.peek_bits<16>().to_ulong(), 0xDEAD);
 	EXPECT_EQ(stream.read_bits<16>().to_ulong(), 0xDEAD);
+	EXPECT_TRUE(stream.at_end());
+}
+
+TEST(bytes, seek_and_read_bits)
+{
+	bytes::stream::buffer_t buffer { 0xEF, 0xBE, 0xAD, 0xDE };
+	bytes::stream stream { buffer };
+
+	EXPECT_EQ(stream.peek_bits<32>().to_ulong(), 0xDEADBEEF);
+
+	stream.seek(2, 0);
+	EXPECT_EQ(stream.peek_bits<16>().to_ulong(), 0xDEAD);
+
+	stream.seek(1, 4);
+	EXPECT_EQ(stream.peek_bits<8>().to_ulong(), 0xDB);
+
+	EXPECT_FALSE(stream.at_end());
+	stream.seek(4, 0);
+	EXPECT_TRUE(stream.at_end());
+
+	stream.seek(0, 0);
+	EXPECT_FALSE(stream.at_end());
+	EXPECT_EQ(stream.peek_bits<32>().to_ulong(), 0xDEADBEEF);
 }
