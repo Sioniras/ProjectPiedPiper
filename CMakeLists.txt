@@ -19,8 +19,6 @@ link_directories("$ENV{LIBRARIES_PATH}/gtest/lib")
 # General includes
 set(SOURCES_TARGET_LIBRARY
 	# Byte level utilities
-	include/bytes/buffer.h
-	source/bytes/buffer.cpp
 	include/bytes/stream.h
 	source/bytes/stream.cpp
 )

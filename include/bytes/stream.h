@@ -7,8 +7,8 @@
 
 #include <cassert>
 #include <bitset>
-
-#include <bytes/buffer.h>
+#include <cstdint>
+#include <vector>
 
 namespace bytes
 {
