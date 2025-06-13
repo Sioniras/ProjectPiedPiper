@@ -21,6 +21,10 @@ set(SOURCES_TARGET_LIBRARY
 	# Byte level utilities
 	include/bytes/stream.h
 	source/bytes/stream.cpp
+
+	# Compression module
+	include/compression/compression.h
+	include/compression/identity.h
 )
 
 # -------------------------------------------------
@@ -37,7 +41,11 @@ set(SOURCES_TARGET_EXE
 set(SOURCES_TARGET_TESTS
 	tests/test_main.cpp
 
+	# Bytes module
 	tests/bytes/stream.cpp
+
+	# Compression algorithms
+	tests/compression/identity.cpp
 )
 
 # -------------------------------------------------
