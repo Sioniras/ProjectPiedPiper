@@ -18,8 +18,11 @@ link_directories("$ENV{LIBRARIES_PATH}/gtest/lib")
 # -------------------------------------------------
 # General includes
 set(SOURCES_TARGET_LIBRARY
-	include/buffer.h
-	source/buffer.cpp
+	# Byte level utilities
+	include/bytes/buffer.h
+	source/bytes/buffer.cpp
+	include/bytes/stream.h
+	source/bytes/stream.cpp
 )
 
 # -------------------------------------------------
@@ -35,6 +38,8 @@ set(SOURCES_TARGET_EXE
 # -------------------------------------------------
 set(SOURCES_TARGET_TESTS
 	tests/test_main.cpp
+
+	tests/bytes/stream.cpp
 )
 
 # -------------------------------------------------

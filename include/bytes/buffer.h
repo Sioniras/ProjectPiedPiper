@@ -24,11 +24,16 @@ namespace bytes
 			buffer& operator=(buffer&&);
 
 			// Public interface
-			uint8_t* get() { return &_buffer[0]; }
-			const uint8_t* get() const { return &_buffer[0]; }
+			auto& get() { return _buffer; }
+			auto& get(std::size_t index) { return _buffer[index]; }
+			const auto& get() const { return _buffer; }
+			const auto& get(std::size_t index) const { return _buffer[index]; }
 			std::size_t size() const { return _buffer.size(); }
 
 			void reserve(std::size_t);
+
+			// Push back with possible reallocation of buffer
+			void push_back(uint8_t byte) { _buffer.push_back(byte); }
 
 		private:
 			std::vector<uint8_t> _buffer;
