@@ -25,6 +25,10 @@ set(SOURCES_TARGET_LIBRARY
 	# Compression module
 	include/compression/compression.h
 	include/compression/identity.h
+
+	# Utilities
+	include/utility/runsettings.h
+	source/utility/runsettings.cpp
 )
 
 # -------------------------------------------------
@@ -46,6 +50,9 @@ set(SOURCES_TARGET_TESTS
 
 	# Compression algorithms
 	tests/compression/identity.cpp
+
+	# Utilities
+	tests/utility/runsettings_tests.cpp
 )
 
 # -------------------------------------------------
