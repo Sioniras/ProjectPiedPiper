@@ -51,6 +51,7 @@ set(SOURCES_TARGET_TESTS
 
 	# Compression algorithms
 	tests/compression/identity.cpp
+	tests/compression/simple.cpp
 
 	# Utilities
 	tests/utility/runsettings_tests.cpp

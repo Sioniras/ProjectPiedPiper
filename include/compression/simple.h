@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <algorithm>
 #include <variant>
 #include <compression/compression.h>
@@ -26,9 +26,9 @@ namespace
 	using long_symbol_t = std::bitset<constants::long_symbol_bits>;
 	using symbol = std::variant<short_symbol_t, long_symbol_t>;
 	using byte = bytes::stream::byte_t;
-	using frequency_map = std::map<byte, std::size_t>;
-	using alphabet = std::map<byte, symbol>;
-	using inverse_alphabet = std::map<symbol, byte>;
+	using frequency_map = std::unordered_map<byte, std::size_t>;
+	using alphabet = std::unordered_map<byte, symbol>;
+	using inverse_alphabet = std::unordered_map<symbol, byte>;
 
 	// Extracts the most frequent byte from a frequency map
 	byte extract_most_frequent(frequency_map& freqs)
@@ -78,7 +78,7 @@ namespace
 		auto next_short = input.peek_bits<constants::short_symbol_bits>();
 
 		// Check whether this is a short code
-		if ((next_short.to_ulong() & short_symbols()) == short_symbols())
+		if ((next_short.to_ulong() & short_symbols()) != short_symbols())
 			return input.read_bits<constants::short_symbol_bits>();
 
 		// Otherwise read it as a long code
@@ -130,8 +130,9 @@ namespace compression
 					std::visit(put_symbol, translator.at(input.read()));
 
 				// Write bitindex to the first bits
+				byte output_bitindex = output.bitindex();
 				output.seek(0);
-				output.put_bits(std::bitset<3> { input.bitindex() });
+				output.put_bits(std::bitset<3> { output_bitindex });
 
 				return true;
 			}
