@@ -10,84 +10,9 @@
 #include <variant>
 #include <compression/compression.h>
 
-namespace
-{
-	struct constants
-	{
-		constexpr static int short_symbol_bits = 6;
-		constexpr static int long_symbol_bits = 14;
-	};
-
-	constexpr int short_symbols() { return (1 << constants::short_symbol_bits) - 1; }
-	constexpr int long_symbols() { return 1 << (constants::long_symbol_bits - constants::short_symbol_bits); }
-	constexpr int total_symbols() { return short_symbols() + long_symbols(); }
-
-	using short_symbol_t = std::bitset<constants::short_symbol_bits>;
-	using long_symbol_t = std::bitset<constants::long_symbol_bits>;
-	using symbol = std::variant<short_symbol_t, long_symbol_t>;
-	using byte = bytes::stream::byte_t;
-	using frequency_map = std::unordered_map<byte, std::size_t>;
-	using alphabet = std::unordered_map<byte, symbol>;
-	using inverse_alphabet = std::unordered_map<symbol, byte>;
-
-	// Extracts the most frequent byte from a frequency map
-	byte extract_most_frequent(frequency_map& freqs)
-	{
-		// Find the most frequent value
-		auto comparison = [](const frequency_map::value_type& lhs, const frequency_map::value_type& rhs) { return lhs.second < rhs.second; };
-		auto most_frequent = std::max_element(freqs.cbegin(), freqs.cend(), comparison);
-
-		assert(most_frequent != freqs.cend());
-
-		// Extract, remove and return the byte
-		byte value = most_frequent->first;
-		freqs.erase(most_frequent);
-		return value;
-	}
-
-	// Create a symbol for a specific byte
-	constexpr symbol get_symbol(std::size_t number)
-	{
-		if (number < short_symbols())
-			return std::bitset<constants::short_symbol_bits>(number);
-
-		// Set the first short_symbol_bits number of bits to 1 and then count from there on
-		auto bitpattern = ((number - short_symbols() + 1) << constants::short_symbol_bits) | short_symbols();
-
-		return std::bitset<constants::long_symbol_bits>(bitpattern);
-	}
-
-	// Put-operation for symbols
-	struct put_symbol_operation
-	{
-		public:
-			put_symbol_operation(bytes::stream& output) : _output(output) {}
-			~put_symbol_operation() {}
-
-			void operator()(const short_symbol_t& s) const { _output.put_bits(s); }
-			void operator()(const long_symbol_t& s) const { _output.put_bits(s); }
-
-		private:
-			bytes::stream& _output;
-	};
-
-	// Read the next encoded symbol from the stream
-	symbol read_symbol_from_stream(bytes::stream& input)
-	{
-		// Peek at the next short-symbol length bits
-		auto next_short = input.peek_bits<constants::short_symbol_bits>();
-
-		// Check whether this is a short code
-		if ((next_short.to_ulong() & short_symbols()) != short_symbols())
-			return input.read_bits<constants::short_symbol_bits>();
-
-		// Otherwise read it as a long code
-		return input.read_bits<constants::long_symbol_bits>();
-	}
-}
-
 namespace compression
 {
+	template <int short_symbol_bits = 6 , int long_symbol_bits = 14>
 	class simple
 	{
 		public:
@@ -186,5 +111,77 @@ namespace compression
 
 				return true;
 			}
+
+		private:
+			static constexpr int short_symbols() { return (1 << short_symbol_bits) - 1; }
+			static constexpr int long_symbols() { return 1 << (long_symbol_bits - short_symbol_bits); }
+			static constexpr int total_symbols() { return short_symbols() + long_symbols(); }
+
+			using short_symbol_t = std::bitset<short_symbol_bits>;
+			using long_symbol_t = std::bitset<long_symbol_bits>;
+			using symbol = std::variant<short_symbol_t, long_symbol_t>;
+			using byte = bytes::stream::byte_t;
+			using frequency_map = std::unordered_map<byte, std::size_t>;
+			using alphabet = std::unordered_map<byte, symbol>;
+			using inverse_alphabet = std::unordered_map<symbol, byte>;
+
+			// Extracts the most frequent byte from a frequency map
+			static byte extract_most_frequent(frequency_map& freqs)
+			{
+				// Find the most frequent value
+				auto comparison = [](const frequency_map::value_type& lhs, const frequency_map::value_type& rhs) { return lhs.second < rhs.second; };
+				auto most_frequent = std::max_element(freqs.cbegin(), freqs.cend(), comparison);
+
+				assert(most_frequent != freqs.cend());
+
+				// Extract, remove and return the byte
+				byte value = most_frequent->first;
+				freqs.erase(most_frequent);
+				return value;
+			}
+
+			// Create a symbol for a specific byte
+			static constexpr symbol get_symbol(std::size_t number)
+			{
+				if (number < short_symbols())
+					return std::bitset<short_symbol_bits>(number);
+
+				// Set the first short_symbol_bits number of bits to 1 and then count from there on
+				auto bitpattern = ((number - short_symbols() + 1) << short_symbol_bits) | short_symbols();
+
+				return std::bitset<long_symbol_bits>(bitpattern);
+			}
+
+			// Put-operation for symbols
+			struct put_symbol_operation
+			{
+				public:
+					put_symbol_operation(bytes::stream& output) : _output(output) {}
+					~put_symbol_operation() {}
+
+					void operator()(const short_symbol_t& s) const { _output.put_bits(s); }
+					void operator()(const long_symbol_t& s) const { _output.put_bits(s); }
+
+				private:
+					bytes::stream& _output;
+			};
+
+			// Read the next encoded symbol from the stream
+			static symbol read_symbol_from_stream(bytes::stream& input)
+			{
+				// Peek at the next short-symbol length bits
+				auto next_short = input.peek_bits<short_symbol_bits>();
+
+				// Check whether this is a short code
+				if ((next_short.to_ulong() & short_symbols()) != short_symbols())
+					return input.read_bits<short_symbol_bits>();
+
+				// Otherwise read it as a long code
+				return input.read_bits<long_symbol_bits>();
+			}
 	};
+
+	using simple6 = compression::simple<6,14>;
+	using simple5 = compression::simple<5,13>;
+	using simple4 = compression::simple<4,12>;
 }
