@@ -25,6 +25,7 @@ set(SOURCES_TARGET_LIBRARY
 	# Compression module
 	include/compression/compression.h
 	include/compression/identity.h
+	include/compression/simple.h
 
 	# Utilities
 	include/utility/runsettings.h
