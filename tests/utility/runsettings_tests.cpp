@@ -46,3 +46,63 @@ TEST(utility_runsettings, fail_on_wrong_number_of_parameters)
 
 	EXPECT_FALSE(settings.valid());
 }
+
+TEST(utility_runsettings, set_algorithm_simple2)
+{
+	const int argc = 3;
+	const char* argv[argc] { "p3run", "-a", "simple2" };
+	rs settings { argc, argv };
+
+	EXPECT_EQ(settings.algorithm(), rs::settings::algorithm::simple2);
+	EXPECT_TRUE(settings.valid());
+}
+
+TEST(utility_runsettings, set_algorithm_simple3)
+{
+	const int argc = 3;
+	const char* argv[argc] { "p3run", "-a", "simple3" };
+	rs settings { argc, argv };
+
+	EXPECT_EQ(settings.algorithm(), rs::settings::algorithm::simple3);
+	EXPECT_TRUE(settings.valid());
+}
+
+TEST(utility_runsettings, set_algorithm_simple4)
+{
+	const int argc = 3;
+	const char* argv[argc] { "p3run", "-a", "simple4" };
+	rs settings { argc, argv };
+
+	EXPECT_EQ(settings.algorithm(), rs::settings::algorithm::simple4);
+	EXPECT_TRUE(settings.valid());
+}
+
+TEST(utility_runsettings, set_algorithm_simple5)
+{
+	const int argc = 3;
+	const char* argv[argc] { "p3run", "-a", "simple5" };
+	rs settings { argc, argv };
+
+	EXPECT_EQ(settings.algorithm(), rs::settings::algorithm::simple5);
+	EXPECT_TRUE(settings.valid());
+}
+
+TEST(utility_runsettings, set_algorithm_simple6)
+{
+	const int argc = 3;
+	const char* argv[argc] { "p3run", "-a", "simple6" };
+	rs settings { argc, argv };
+
+	EXPECT_EQ(settings.algorithm(), rs::settings::algorithm::simple6);
+	EXPECT_TRUE(settings.valid());
+}
+
+TEST(utility_runsettings, set_algorithm_simple7)
+{
+	const int argc = 3;
+	const char* argv[argc] { "p3run", "-a", "simple7" };
+	rs settings { argc, argv };
+
+	EXPECT_EQ(settings.algorithm(), rs::settings::algorithm::simple7);
+	EXPECT_TRUE(settings.valid());
+}

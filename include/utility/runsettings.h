@@ -23,7 +23,13 @@ namespace utility
 
 				enum class algorithm
 				{
-					identity
+					identity,
+					simple2,
+					simple3,
+					simple4,
+					simple5,
+					simple6,
+					simple7,
 				};
 			};
 

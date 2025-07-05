@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <variant>
+
 #include <compression/compression.h>
 
 namespace compression
@@ -181,7 +182,10 @@ namespace compression
 			}
 	};
 
+	using simple7 = compression::simple<7,15>;
 	using simple6 = compression::simple<6,14>;
 	using simple5 = compression::simple<5,13>;
 	using simple4 = compression::simple<4,12>;
+	using simple3 = compression::simple<3,11>;
+	using simple2 = compression::simple<2,10>;
 }
