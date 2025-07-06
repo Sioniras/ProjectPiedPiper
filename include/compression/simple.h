@@ -17,6 +17,19 @@ namespace compression
 	class simple
 	{
 		public:
+			static constexpr int short_symbols() { return (1 << short_symbol_bits) - 1; }
+			static constexpr int long_symbols() { return 1 << (long_symbol_bits - short_symbol_bits); }
+			static constexpr int total_symbols() { return short_symbols() + long_symbols(); }
+
+			using short_symbol_t = std::bitset<short_symbol_bits>;
+			using long_symbol_t = std::bitset<long_symbol_bits>;
+			using symbol = std::variant<short_symbol_t, long_symbol_t>;
+			using byte = bytes::stream::byte_t;
+			using frequency_map = std::unordered_map<byte, std::size_t>;
+			using alphabet = std::unordered_map<byte, symbol>;
+			using inverse_alphabet = std::unordered_map<symbol, byte>;
+
+		public:
 			// Perform the compression operation
 			static bool compress(bytes::stream& input, bytes::stream& output)
 			{
@@ -40,8 +53,8 @@ namespace compression
 				// Reserve 3 bits for final bitindex in the output buffer
 				output.put_bits(std::bitset<3> { 0 });
 
-				// Put size of alphabet
-				output.put(static_cast<byte>(translator.size()));
+				// Put size of alphabet. Note: Both 0 and 256 should be possible (257 possible values), so 8 bits is not enough
+				output.put_bits<10>(translator.size());
 
 				// Write the bytes that are part of the alphabet in the order used to generate translator
 				for (auto i = alphabet_order.cbegin(); i != alphabet_order.cend(); i++)
@@ -76,7 +89,7 @@ namespace compression
 				byte bitindex = static_cast<byte>(input.read_bits<3>().to_ulong());
 
 				// Get size of the alphabet
-				auto alphabet_size = static_cast<std::size_t>(input.read_bits<8>().to_ulong());
+				auto alphabet_size = static_cast<std::size_t>(input.read_bits<10>().to_ulong());
 
 				// Ensure that there are bytes enough
 				if (input.buffer().size() < input.index() + alphabet_size + 1)
@@ -94,6 +107,10 @@ namespace compression
 				auto input_size = input.buffer().size();
 				while (!input.at_end())
 				{
+					// There may be excess bits in the final byte
+					if (input.index() >= input_size - 1 && input.bitindex() >= bitindex)
+						break;
+
 					// Get the next symbol
 					symbol next = read_symbol_from_stream(input);
 
@@ -104,28 +121,12 @@ namespace compression
 
 					// Write the byte value to the output stream
 					output.put(decoded->second);
-
-					// There may be excess bits in the final byte
-					if (input.index() >= input_size - 1 && input.bitindex() >= bitindex)
-						break;
 				}
 
 				return true;
 			}
 
 		private:
-			static constexpr int short_symbols() { return (1 << short_symbol_bits) - 1; }
-			static constexpr int long_symbols() { return 1 << (long_symbol_bits - short_symbol_bits); }
-			static constexpr int total_symbols() { return short_symbols() + long_symbols(); }
-
-			using short_symbol_t = std::bitset<short_symbol_bits>;
-			using long_symbol_t = std::bitset<long_symbol_bits>;
-			using symbol = std::variant<short_symbol_t, long_symbol_t>;
-			using byte = bytes::stream::byte_t;
-			using frequency_map = std::unordered_map<byte, std::size_t>;
-			using alphabet = std::unordered_map<byte, symbol>;
-			using inverse_alphabet = std::unordered_map<symbol, byte>;
-
 			// Extracts the most frequent byte from a frequency map
 			static byte extract_most_frequent(frequency_map& freqs)
 			{
