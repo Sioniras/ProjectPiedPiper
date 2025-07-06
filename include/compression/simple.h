@@ -54,7 +54,7 @@ namespace compression
 				output.put_bits(std::bitset<3> { 0 });
 
 				// Put size of alphabet. Note: Both 0 and 256 should be possible (257 possible values), so 8 bits is not enough
-				output.put_bits<10>(translator.size());
+				output.put_bits<9>(translator.size());
 
 				// Write the bytes that are part of the alphabet in the order used to generate translator
 				for (auto i = alphabet_order.cbegin(); i != alphabet_order.cend(); i++)
@@ -89,7 +89,7 @@ namespace compression
 				byte bitindex = static_cast<byte>(input.read_bits<3>().to_ulong());
 
 				// Get size of the alphabet
-				auto alphabet_size = static_cast<std::size_t>(input.read_bits<10>().to_ulong());
+				auto alphabet_size = static_cast<std::size_t>(input.read_bits<9>().to_ulong());
 
 				// Ensure that there are bytes enough
 				if (input.buffer().size() < input.index() + alphabet_size + 1)
@@ -108,7 +108,7 @@ namespace compression
 				while (!input.at_end())
 				{
 					// There may be excess bits in the final byte
-					if (input.index() >= input_size - 1 && input.bitindex() >= bitindex)
+					if (bitindex > 0 && input.index() >= input_size - 1 && input.bitindex() >= bitindex)
 						break;
 
 					// Get the next symbol
