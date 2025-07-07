@@ -28,6 +28,7 @@ set(SOURCES_TARGET_LIBRARY
 	include/compression/identity.h
 	include/compression/simple.h
 	include/compression/huffman.h
+	source/compression/huffman.cpp
 
 	# Utilities
 	include/utility/runsettings.h
