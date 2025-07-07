@@ -30,6 +30,7 @@ namespace utility
 					simple5,
 					simple6,
 					simple7,
+					huffman
 				};
 			};
 

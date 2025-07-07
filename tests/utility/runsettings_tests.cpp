@@ -106,3 +106,13 @@ TEST(utility_runsettings, set_algorithm_simple7)
 	EXPECT_EQ(settings.algorithm(), rs::settings::algorithm::simple7);
 	EXPECT_TRUE(settings.valid());
 }
+
+TEST(utility_runsettings, set_algorithm_huffman)
+{
+	const int argc = 3;
+	const char* argv[argc] { "p3run", "-a", "huffman" };
+	rs settings { argc, argv };
+
+	EXPECT_EQ(settings.algorithm(), rs::settings::algorithm::huffman);
+	EXPECT_TRUE(settings.valid());
+}

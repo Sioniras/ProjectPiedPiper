@@ -39,6 +39,7 @@ namespace bytes
 			inline void put_fast(byte_t byte);
 			void put(byte_t byte);
 			template <std::size_t n> inline void put_bits(std::bitset<n>);
+			void put_bits(const struct dynamic_bitset&);
 
 			byte_t read();
 			byte_t peek() const;

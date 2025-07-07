@@ -3,6 +3,8 @@
 /////////////////////////////////////////////////////////////////////////
 #include <bytes/stream.h>
 
+#include <bytes/dynamic_bitset.h>
+
 namespace bytes
 {
 	// ----------------------------------------------------------------------
@@ -85,6 +87,13 @@ namespace bytes
 			_buffer.push_back(byte);
 
 		++_index;
+	}
+
+	// Writes a dynamic set of bits
+	void stream::put_bits(const dynamic_bitset& bits)
+	{
+		for (auto i = bits.bits.cbegin(); i != bits.bits.cend(); i++)
+			put_bits<1>(*i);
 	}
 
 	// Change the current position within the stream

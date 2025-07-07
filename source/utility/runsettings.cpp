@@ -11,6 +11,7 @@
 #include <compression/compression.h>
 #include <compression/identity.h>
 #include <compression/simple.h>
+#include <compression/huffman.h>
 
 namespace
 {
@@ -34,6 +35,7 @@ namespace
 	template <> struct algorithm_choice<algorithm_t::simple5> { using algorithm = typename compression::simple5; };
 	template <> struct algorithm_choice<algorithm_t::simple6> { using algorithm = typename compression::simple6; };
 	template <> struct algorithm_choice<algorithm_t::simple7> { using algorithm = typename compression::simple7; };
+	template <> struct algorithm_choice<algorithm_t::huffman> { using algorithm = typename compression::huffman; };
 
 	// Parsing of algorithm type
 	auto algorithm_from_string(const std::string& algorithm)
@@ -48,6 +50,7 @@ namespace
 		algorithms["simple5"] = algorithm_t::simple5;
 		algorithms["simple6"] = algorithm_t::simple6;
 		algorithms["simple7"] = algorithm_t::simple7;
+		algorithms["huffman"] = algorithm_t::huffman;
 
 		if (algorithms.contains(algorithm))
 			result = algorithms.at(algorithm);
@@ -168,6 +171,8 @@ namespace utility
 				return run_algorithm<compression::simple6>(_mode, std::move(input));
 			case settings::algorithm::simple7:
 				return run_algorithm<compression::simple7>(_mode, std::move(input));
+			case settings::algorithm::huffman:
+				return run_algorithm<compression::huffman>(_mode, std::move(input));
 		}
 	}
 }
