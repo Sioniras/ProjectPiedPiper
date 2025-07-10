@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <variant>
 
-#include <compression/compression.h>
+#include <bytes/stream.h>
 
 namespace compression
 {

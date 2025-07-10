@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include <compression/compression.h>
+#include <bytes/stream.h>
 
 namespace compression
 {
