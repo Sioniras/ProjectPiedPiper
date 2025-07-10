@@ -40,22 +40,25 @@ namespace bytes
 			}
 
 			// Convert to number
-			std::size_t to_uint() const
-			{
-				std::size_t result = 0;
-				for (auto i = bits.cbegin(); i != bits.cend(); i++)
-					result = (result << 1) | i->count();
-
-				return result;
-			}
+			std::size_t to_uint() const noexcept { return append_bits(0); }
 
 			// Hash
 			std::size_t hash() const
 			{
-				return std::hash<std::size_t>{}(to_uint());
+				// Append bits to 1 such that "10" and "010" will yield different hashes
+				return std::hash<std::size_t>{}(append_bits(1));
 			}
 
 			// The data
 			std::vector<std::bitset<1>> bits;
+
+		private:
+			// Appends bits to a value
+			std::size_t append_bits(std::size_t value) const
+			{
+				for (auto i = bits.cbegin(); i != bits.cend(); i++)
+					value = (value << 1) | i->count();
+				return value;
+			}
 	};
 }
