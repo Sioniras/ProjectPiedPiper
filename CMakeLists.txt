@@ -51,6 +51,7 @@ set(SOURCES_TARGET_TESTS
 
 	# Bytes module
 	tests/bytes/stream.cpp
+	tests/bytes/dynamic_bitset.cpp
 
 	# Compression algorithms
 	tests/compression/identity.cpp

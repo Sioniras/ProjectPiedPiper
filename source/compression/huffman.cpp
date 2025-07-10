@@ -96,11 +96,6 @@ template <> struct std::hash<node>
 	std::size_t operator()(const node& l) const { return std::hash<bytes::stream::byte_t>()(l.value); }
 };
 
-template <> struct std::hash<const bytes::dynamic_bitset>
-{
-	std::size_t operator()(const bytes::dynamic_bitset& l) const { return l.hash(); }
-};
-
 // ----------------------------------------------------------------------
 // Compression function
 // ----------------------------------------------------------------------

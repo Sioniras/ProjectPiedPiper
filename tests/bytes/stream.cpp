@@ -5,7 +5,7 @@
 
 #include <bytes/stream.h>
 
-TEST(bytes, put_bytes)
+TEST(bytes_stream, put_bytes)
 {
 	bytes::stream::buffer_t buffer;
 	bytes::stream stream { buffer };
@@ -19,7 +19,7 @@ TEST(bytes, put_bytes)
 	EXPECT_EQ(stream.buffer()[2], 0x82);
 }
 
-TEST(bytes, put_bytes_fast)
+TEST(bytes_stream, put_bytes_fast)
 {
 	bytes::stream::buffer_t buffer { 0, 0, 0 };
 	bytes::stream stream { buffer };
@@ -33,7 +33,7 @@ TEST(bytes, put_bytes_fast)
 	EXPECT_EQ(stream.buffer()[2], 0x82);
 }
 
-TEST(bytes, put_bits)
+TEST(bytes_stream, put_bits)
 {
 	bytes::stream stream;
 
@@ -45,7 +45,7 @@ TEST(bytes, put_bits)
 	EXPECT_EQ(stream.buffer()[3], 0xDE);
 }
 
-TEST(bytes, put_bits_and_bytes)
+TEST(bytes_stream, put_bits_and_bytes)
 {
 	bytes::stream stream;
 
@@ -68,7 +68,7 @@ TEST(bytes, put_bits_and_bytes)
 	EXPECT_EQ(stream.buffer()[8], 0xFF);
 }
 
-TEST(bytes, read_and_peek)
+TEST(bytes_stream, read_and_peek)
 {
 	bytes::stream::buffer_t buffer { 0xDE, 0xAD, 0xBE, 0xEF };
 	bytes::stream stream { buffer };
@@ -81,7 +81,7 @@ TEST(bytes, read_and_peek)
 	EXPECT_EQ(stream.read(), 0xEF);
 }
 
-TEST(bytes, read_bits)
+TEST(bytes_stream, read_bits)
 {
 	bytes::stream::buffer_t buffer { 0xDE, 0xAD, 0xEF, 0xBE };
 	bytes::stream stream { buffer };
@@ -92,7 +92,7 @@ TEST(bytes, read_bits)
 	EXPECT_EQ(stream.read_bits<16>().to_ulong(), 0xBEEF);
 }
 
-TEST(bytes, peek_bits)
+TEST(bytes_stream, peek_bits)
 {
 	bytes::stream::buffer_t buffer { 0xEF, 0xBE, 0xAD, 0xDE };
 	bytes::stream stream { buffer };
@@ -102,7 +102,7 @@ TEST(bytes, peek_bits)
 	EXPECT_EQ(stream.peek_bits<4>().to_ulong(), 0xF);
 }
 
-TEST(bytes, read_and_peek_bits)
+TEST(bytes_stream, read_and_peek_bits)
 {
 	bytes::stream::buffer_t buffer { 0xEF, 0xBE, 0xAD, 0xDE };
 	bytes::stream stream { buffer };
@@ -116,7 +116,7 @@ TEST(bytes, read_and_peek_bits)
 	EXPECT_TRUE(stream.at_end());
 }
 
-TEST(bytes, seek_and_read_bits)
+TEST(bytes_stream, seek_and_read_bits)
 {
 	bytes::stream::buffer_t buffer { 0xEF, 0xBE, 0xAD, 0xDE };
 	bytes::stream stream { buffer };
