@@ -93,12 +93,12 @@ namespace
 // ----------------------------------------------------------------------
 template <> struct std::hash<node>
 {
-		std::size_t operator()(const node& l) const { return std::hash<bytes::stream::byte_t>()(l.value); }
+	std::size_t operator()(const node& l) const { return std::hash<bytes::stream::byte_t>()(l.value); }
 };
 
 template <> struct std::hash<const bytes::dynamic_bitset>
 {
-		std::size_t operator()(const bytes::dynamic_bitset& l) const { return l.hash(); }
+	std::size_t operator()(const bytes::dynamic_bitset& l) const { return l.hash(); }
 };
 
 // ----------------------------------------------------------------------
@@ -147,7 +147,7 @@ bool compression::huffman::compress(bytes::stream& input, bytes::stream& output)
 		output.put_bits(i->second);
 	}
 
-	// Reset input stream position and erite the stream using the alphabet
+	// Reset input stream position and write the stream using the alphabet
 	input.seek(0);
 	while (!input.at_end())
 		output.put_bits(translator.at(input.read()));
